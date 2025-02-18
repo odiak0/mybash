@@ -1,2 +1,1 @@
-# mybash
-My bash configuration
+**WORK IN PROGRESS**
