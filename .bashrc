@@ -248,7 +248,6 @@ distribution () {
 
     # Use /etc/os-release for modern distro identification
     if [ -r /etc/os-release ]; then
-        source /etc/os-release
         case $ID in
             fedora|rhel|centos)
                 dtype="redhat"
@@ -295,6 +294,7 @@ distribution () {
                 ;;
         esac
     fi
+    echo "$dtype"
 }
 
 
