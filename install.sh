@@ -26,6 +26,10 @@ detect_package_manager() {
         PACKAGER="pacman"
         PACKAGER_INSTALL="sudo pacman -S --noconfirm"
         PACKAGER_UPDATE="sudo pacman -Syu"
+    elif command -v zypper &> /dev/null; then
+        PACKAGER="zypper"
+        PACKAGER_INSTALL="sudo zypper install -y"
+        PACKAGER_UPDATE="sudo zypper update -y"
     else
         whiptail --title "Error" --msgbox "Error: Unsupported package manager. Please install packages manually." 8 78
         exit 1
@@ -98,9 +102,49 @@ setup_aur_helper() {
     fi
 }
 
+# Install dependencies
+install_dependencies() {
+    print_message "Installing dependencies..." "$YELLOW"
+    
+    case $PACKAGER in
+        "apt-get")
+            if ! $PACKAGER_INSTALL bash tar wget unzip fastfetch batcat tree zoxide starship; then
+                whiptail --title "Error" --msgbox "Failed to install dependencies." 8 78
+                exit 1
+            fi
+            ;;
+        "dnf")
+            if ! $PACKAGER_INSTALL bash tar bat fastfetch wget unzip tree zoxide starship; then
+                whiptail --title "Error" --msgbox "Failed to install dependencies." 8 78
+                exit 1
+            fi
+            ;;
+        "pacman")
+            if ! $PACKAGER_INSTALL bash tar bat fastfetch wget unzip tree starship zoxide; then
+                whiptail --title "Error" --msgbox "Failed to install dependencies." 8 78
+                exit 1
+            fi
+            ;;
+        "zypper")
+            if ! $PACKAGER_INSTALL bash tar bat fastfetch wget unzip tree zoxide starship; then
+                whiptail --title "Error" --msgbox "Failed to install dependencies." 8 78
+                exit 1
+            fi
+            ;;
+        *)
+            whiptail --title "Error" --msgbox "Unsupported package manager." 8 78
+            exit 1
+            ;;
+    esac
+    
+    print_message "Dependencies installed successfully!" "$GREEN"
+}
+
 main() {
     detect_package_manager
     setup_linuxtoolbox
+    setup_aur_helper
+    install_dependencies
 
     print_message "Updating system..." "$YELLOW"
     $PACKAGER_UPDATE
