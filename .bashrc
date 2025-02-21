@@ -15,8 +15,8 @@ fi
 if command -v nvim &> /dev/null; then
     export EDITOR=nvim
     export VISUAL=nvim
-    alias vi='nvim'
-    alias svi='sudo nvim'
+    alias vim='nvim'
+    alias svim='sudo nvim'
 else
     export EDITOR=vim
     export VISUAL=vim
@@ -35,6 +35,10 @@ export LESS_TERMCAP_se=$'\E[0m'
 export LESS_TERMCAP_so=$'\E[01;44;33m'
 export LESS_TERMCAP_ue=$'\E[0m'
 export LESS_TERMCAP_us=$'\E[01;32m'
+
+#######################################################
+# GENERAL ALIASES
+#######################################################
 
 # aliases to modified commands
 alias cp='cp -i'
@@ -77,9 +81,6 @@ alias f="find . | grep "
 
 # To see if a command is aliased, a file, or a built-in command
 alias checkcommand="type -t"
-
-# Show open ports
-alias openports='netstat -nape --inet'
 
 # alias for force reboot
 alias rebootforce='sudo shutdown -r -n now'
@@ -130,8 +131,6 @@ ftext() {
 	# -H causes filename to be printed
 	# -r recursive search
 	# -n causes line number to be printed
-	# optional: -F treat search term as a literal, not a regular expression
-	# optional: -l only print filenames and not the matching lines ex. grep -irl "$1" *
 	grep -iIHrn --color=always "$1" . | less -r
 }
 
