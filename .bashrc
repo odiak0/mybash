@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
 
-# If not running interactively, don't do anything
-[[ $- != *i* ]] && return
-
 if command -v fastfetch &> /dev/null; then
     # Only run fastfetch if we're in an interactive shell
     if [[ $- == *i* ]]; then
@@ -18,7 +15,6 @@ fi
 if command -v nvim &> /dev/null; then
     export EDITOR=nvim
     export VISUAL=nvim
-    alias vim='nvim'
     alias vi='nvim'
     alias svi='sudo nvim'
 else
@@ -43,36 +39,15 @@ export LESS_TERMCAP_us=$'\E[01;32m'
 # aliases to modified commands
 alias cp='cp -i'
 alias mv='mv -i'
-if command -v trash &> /dev/null; then
-    alias rm='trash -v'
-else
-    alias rm='rm -i'  # fallback to interactive remove
-fi
+alias rm='rm -i'
 alias mkdir='mkdir -p'
 alias ps='ps auxf'
-alias less='less -R'
 alias cls='clear'
-alias apt-get='sudo apt-get'
-alias multitail='multitail --no-repeat -c'
-alias freshclam='sudo freshclam'
-alias vi='nvim'
-alias svi='sudo vi'
-alias vis='nvim "+set si"'
-
 
 # Change directory aliases
-alias home='cd ~'
-alias cd..='cd ..'
-alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../..'
 alias .....='cd ../../../..'
-
-# cd into the old directory
-alias bd='cd "$OLDPWD"'
-
-# Remove a directory and all files
-alias rmd='/bin/rm  --recursive --force --verbose '
 
 # aliases for multiple directory listing commands
 alias la='ls -Alh'                # show hidden files
@@ -93,17 +68,6 @@ alias lla='ls -Al'                # List and Hidden Files
 alias las='ls -A'                 # Hidden Files
 alias lls='ls -l'                 # List
 
-# alias chmod commands
-alias mx='chmod a+x'
-alias 000='chmod -R 000'
-alias 644='chmod -R 644'
-alias 666='chmod -R 666'
-alias 755='chmod -R 755'
-alias 777='chmod -R 777'
-
-# Search command line history
-alias h="history | grep "
-
 # Search running processes
 alias p="ps aux | grep "
 alias topcpu="/bin/ps -eo pcpu,pid,user,args | sort -k 1 -r | head -10"
@@ -117,53 +81,40 @@ alias checkcommand="type -t"
 # Show open ports
 alias openports='netstat -nape --inet'
 
-# aliases for safe and forced reboots
-alias rebootsafe='sudo shutdown -r now'
+# alias for force reboot
 alias rebootforce='sudo shutdown -r -n now'
 
 # aliases to show disk space and space used in a folder
-alias diskspace="du -S | sort -n -r |more"
-alias folders='du -h --max-depth=1'
-alias folderssort='find . -maxdepth 1 -type d -print0 | xargs -0 du -sk | sort -rn'
-alias tree='tree -CAhF --dirsfirst'
-alias treed='tree -CAFd'
-alias mountedinfo='df -hT'
+alias size='du -h --max-depth=1'
+alias tree='tree -ChF --dirsfirst'
 
 # aliases for archives
 alias mktar='tar -cvf'
 alias mkbz2='tar -cvjf'
 alias mkgz='tar -cvzf'
-alias untar='tar -xvf'
-alias unbz2='tar -xvjf'
-alias ungz='tar -xvzf'
 
 # Show all logs in /var/log
 alias logs="sudo find /var/log -type f -exec file {} \; | grep 'text' | cut -d' ' -f1 | sed -e's/:$//g' | grep -v '[0-9]$' | xargs tail -f"
 
-# SHA1
-alias sha1='openssl sha1'
-
-alias clickpaste='sleep 3; xdotool type "$(xclip -o -selection clipboard)"'
-
 #######################################################
 # SPECIAL FUNCTIONS
 #######################################################
-# Extracts any archive(s) (if unp isn't installed)
+# Extracts any archive(s)
 extract() {
 	for archive in "$@"; do
 		if [ -f "$archive" ]; then
 			case $archive in
-			*.tar.bz2) tar xvjf $archive ;;
-			*.tar.gz) tar xvzf $archive ;;
-			*.bz2) bunzip2 $archive ;;
-			*.rar) rar x $archive ;;
-			*.gz) gunzip $archive ;;
-			*.tar) tar xvf $archive ;;
-			*.tbz2) tar xvjf $archive ;;
-			*.tgz) tar xvzf $archive ;;
-			*.zip) unzip $archive ;;
-			*.Z) uncompress $archive ;;
-			*.7z) 7z x $archive ;;
+			*.tar.bz2) tar xvjf "$archive" ;;
+			*.tar.gz) tar xvzf "$archive" ;;
+			*.bz2) bunzip2 "$archive" ;;
+			*.rar) rar x "$archive" ;;
+			*.gz) gunzip "$archive" ;;
+			*.tar) tar xvf "$archive" ;;
+			*.tbz2) tar xvjf "$archive" ;;
+			*.tgz) tar xvzf "$archive" ;;
+			*.zip) unzip "$archive" ;;
+			*.Z) uncompress "$archive" ;;
+			*.7z) 7z x "$archive" ;;
 			*) echo "don't know how to extract '$archive'..." ;;
 			esac
 		else
@@ -182,26 +133,6 @@ ftext() {
 	# optional: -F treat search term as a literal, not a regular expression
 	# optional: -l only print filenames and not the matching lines ex. grep -irl "$1" *
 	grep -iIHrn --color=always "$1" . | less -r
-}
-
-# Copy file with a progress bar
-cpp() {
-    set -e
-    strace -q -ewrite cp -- "${1}" "${2}" 2>&1 |
-    awk '{
-        count += $NF
-        if (count % 10 == 0) {
-            percent = count / total_size * 100
-            printf "%3d%% [", percent
-            for (i=0;i<=percent;i++)
-                printf "="
-            printf ">"
-            for (i=percent;i<100;i++)
-                printf " "
-            printf "]\r"
-        }
-    }
-    END { print "" }' total_size="$(stat -c '%s' "${1}")" count=0
 }
 
 # Copy and go to the directory
@@ -226,20 +157,6 @@ mvg() {
 mkdirg() {
 	mkdir -p "$1"
 	cd "$1"
-}
-
-# Goes up a specified number of directories  (i.e. up 4)
-up() {
-	local d=""
-	limit=$1
-	for ((i = 1; i <= limit; i++)); do
-		d=$d/..
-	done
-	d=$(echo $d | sed 's/^\///')
-	if [ -z "$d" ]; then
-		d=..
-	fi
-	cd $d
 }
 
 # Show the current distribution

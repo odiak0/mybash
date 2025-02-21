@@ -24,7 +24,7 @@ detect_package_manager() {
         PACKAGER_UPDATE="sudo dnf upgrade -y"
     elif command -v pacman &> /dev/null; then
         PACKAGER="pacman"
-        PACKAGER_INSTALL="sudo pacman -S --noconfirm"
+        PACKAGER_INSTALL="sudo pacman -S --noconfirm --needed"
         PACKAGER_UPDATE="sudo pacman -Syu"
     elif command -v zypper &> /dev/null; then
         PACKAGER="zypper"
@@ -108,25 +108,25 @@ install_dependencies() {
     
     case $PACKAGER in
         "apt-get")
-            if ! $PACKAGER_INSTALL bash tar wget unzip fastfetch batcat tree zoxide starship; then
+            if ! $PACKAGER_INSTALL bash less tar wget unzip fastfetch batcat tree zoxide starship; then
                 whiptail --title "Error" --msgbox "Failed to install dependencies." 8 78
                 exit 1
             fi
             ;;
         "dnf")
-            if ! $PACKAGER_INSTALL bash tar bat fastfetch wget unzip tree zoxide starship; then
+            if ! $PACKAGER_INSTALL bash less tar bat fastfetch wget unzip tree zoxide starship; then
                 whiptail --title "Error" --msgbox "Failed to install dependencies." 8 78
                 exit 1
             fi
             ;;
         "pacman")
-            if ! $PACKAGER_INSTALL bash tar bat fastfetch wget unzip tree starship zoxide; then
+            if ! $PACKAGER_INSTALL bash tar less bat fastfetch wget unzip tree starship zoxide; then
                 whiptail --title "Error" --msgbox "Failed to install dependencies." 8 78
                 exit 1
             fi
             ;;
         "zypper")
-            if ! $PACKAGER_INSTALL bash tar bat fastfetch wget unzip tree zoxide starship; then
+            if ! $PACKAGER_INSTALL bash tar less bat fastfetch wget unzip tree zoxide starship; then
                 whiptail --title "Error" --msgbox "Failed to install dependencies." 8 78
                 exit 1
             fi
@@ -140,11 +140,41 @@ install_dependencies() {
     print_message "Dependencies installed successfully!" "$GREEN"
 }
 
+# Setup configuration files
+setup_configs() {
+    print_message "Installing configuration files..." "$YELLOW"
+    
+    # Warning about configuration removal
+    if ! whiptail --title "Warning" --yesno "This will remove your existing shell configuration files.\n\nPlease make sure you have backed up any important configurations before continuing.\n\nDo you want to proceed?" 12 78; then
+        exit 1
+    fi
+    
+    # Install .bashrc
+    if [ -f "$HOME/.bashrc" ]; then
+        rm -f "$HOME/.bashrc"
+    fi
+    cp -vf "$LINUXTOOLBOXDIR/mybash/.bashrc" "$HOME/.bashrc"
+    
+    # Install Starship config
+    STARSHIP_CONFIG_DIR="$HOME/.config"
+    if [ ! -d "$STARSHIP_CONFIG_DIR" ]; then
+        mkdir -p "$STARSHIP_CONFIG_DIR"
+    fi
+    
+    if [ -f "$STARSHIP_CONFIG_DIR/starship.toml" ]; then
+        rm -f "$STARSHIP_CONFIG_DIR/starship.toml"
+    fi
+    cp -vf "$LINUXTOOLBOXDIR/mybash/starship.toml" "$STARSHIP_CONFIG_DIR/starship.toml"
+    
+    print_message "Configuration files setup completed!" "$GREEN"
+}
+
 main() {
     detect_package_manager
     setup_linuxtoolbox
     setup_aur_helper
     install_dependencies
+    setup_configs
 
     print_message "Updating system..." "$YELLOW"
     $PACKAGER_UPDATE
