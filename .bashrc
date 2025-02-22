@@ -213,8 +213,7 @@ distribution () {
     echo "$dtype"
 }
 
-
-DISTRIBUTION=$(distribution)
+dtype=$(distribution)
 if command -v bat &> /dev/null || command -v batcat &> /dev/null; then
     if [ "$DISTRIBUTION" = "redhat" ] || [ "$DISTRIBUTION" = "arch" ]; then
         alias cat='bat'
