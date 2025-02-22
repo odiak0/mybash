@@ -108,25 +108,25 @@ install_dependencies() {
     
     case $PACKAGER in
         "apt-get")
-            if ! $PACKAGER_INSTALL bash less tar wget unzip fastfetch batcat tree zoxide starship; then
+            if ! $PACKAGER_INSTALL bash less tar wget unzip fastfetch batcat tree zoxide starship fonts-font-awesome; then
                 whiptail --title "Error" --msgbox "Failed to install dependencies." 8 78
                 exit 1
             fi
             ;;
         "dnf")
-            if ! $PACKAGER_INSTALL bash less tar bat fastfetch wget unzip tree zoxide starship; then
+            if ! $PACKAGER_INSTALL bash less tar bat fastfetch wget unzip tree zoxide starship fontawesome-6-free-fonts; then
                 whiptail --title "Error" --msgbox "Failed to install dependencies." 8 78
                 exit 1
             fi
             ;;
         "pacman")
-            if ! $PACKAGER_INSTALL bash tar less bat fastfetch wget unzip tree starship zoxide; then
+            if ! $PACKAGER_INSTALL bash tar less bat fastfetch wget unzip tree starship zoxide ttf-font-awesome; then
                 whiptail --title "Error" --msgbox "Failed to install dependencies." 8 78
                 exit 1
             fi
             ;;
         "zypper")
-            if ! $PACKAGER_INSTALL bash tar less bat fastfetch wget unzip tree zoxide starship; then
+            if ! $PACKAGER_INSTALL bash tar less bat fastfetch wget unzip tree zoxide starship fontawesome-fonts; then
                 whiptail --title "Error" --msgbox "Failed to install dependencies." 8 78
                 exit 1
             fi
