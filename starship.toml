@@ -35,10 +35,10 @@ truncation_length = 3
 truncation_symbol = "…/"
 
 [directory.substitutions]
-"Documents" = "󰈙 "
-"Downloads" = " "
+"Documents" = "󰈙"
+"Downloads" = ""
 "Music" = " "
-"Pictures" = " "
+"Pictures" = ""
 
 [c]
 symbol = " "
@@ -51,7 +51,7 @@ style = "bg:#06969A"
 format = '[ $symbol $context ]($style)$path'
 
 [elixir]
-symbol = " "
+symbol = ""
 style = "bg:#86BBD8"
 format = '[ $symbol ($version) ]($style)'
 
@@ -70,12 +70,12 @@ style = "bg:#86BBD8"
 format = '[ $symbol ($version) ]($style)'
 
 [java]
-symbol = " "
+symbol = " "
 style = "bg:#86BBD8"
 format = '[ $symbol ($version) ]($style)'
 
 [nodejs]
-symbol = ""
+symbol = " "
 style = "bg:#86BBD8"
 format = '[ $symbol ($version) ]($style)'
 
@@ -84,7 +84,7 @@ style = "bg:#3B4252"
 format = '[(\($virtualenv\) )]($style)'
 
 [rust]
-symbol = ""
+symbol = " "
 style = "bg:#86BBD8"
 format = '[ $symbol ($version) ]($style)'
 
