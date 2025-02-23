@@ -85,7 +85,7 @@ alias checkcommand="type -t"
 # alias for force reboot
 alias rebootforce='sudo shutdown -r -n now'
 
-# aliases to show disk space and space used in a folder
+# aliases to show space used in a folder
 alias size='du -h --max-depth=1'
 alias tree='tree -ChF --dirsfirst'
 
@@ -164,6 +164,7 @@ distribution () {
 
     # Use /etc/os-release for modern distro identification
     if [ -r /etc/os-release ]; then
+        source /etc/os-release
         case $ID in
             fedora|rhel|centos)
                 dtype="redhat"
@@ -213,7 +214,7 @@ distribution () {
     echo "$dtype"
 }
 
-dtype=$(distribution)
+DISTRIBUTION=$(distribution)
 if command -v bat &> /dev/null || command -v batcat &> /dev/null; then
     if [ "$DISTRIBUTION" = "redhat" ] || [ "$DISTRIBUTION" = "arch" ]; then
         alias cat='bat'
