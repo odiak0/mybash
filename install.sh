@@ -108,7 +108,7 @@ install_dependencies() {
     
     case $PACKAGER in
         "apt-get")
-            if ! $PACKAGER_INSTALL bash less tar wget unzip fastfetch batcat tree zoxide starship fonts-font-awesome; then
+            if ! $PACKAGER_INSTALL bash less tar wget unzip fastfetch bat tree zoxide starship fonts-font-awesome; then
                 whiptail --title "Error" --msgbox "Failed to install dependencies." 8 78
                 exit 1
             fi
