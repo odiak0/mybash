@@ -214,7 +214,11 @@ distribution () {
     echo "$dtype"
 }
 
-alias cat='bat'
+if [[ "$(distribution)" == "debian" ]]; then
+    alias cat='batcat'
+else
+    alias cat='bat'
+fi
 
 gcom() {
 	git add .
