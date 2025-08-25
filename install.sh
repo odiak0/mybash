@@ -120,7 +120,7 @@ install_dependencies() {
             fi
             ;;
         "pacman")
-            if ! $PACKAGER_INSTALL bash tar less bat fastfetch wget unzip tree starship zoxide ttf-font-awesome; then
+            if ! $PACKAGER_INSTALL bash tar less bat fastfetch wget unzip tree starship zoxide otf-font-awesome; then
                 whiptail --title "Error" --msgbox "Failed to install dependencies." 8 78
                 exit 1
             fi
